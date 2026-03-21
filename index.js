@@ -117,7 +117,8 @@ if (interaction.commandName === "canonlist") {
     });
   }
 
-  const canons = await Canon.find().sort({ category: 1, subCategory: 1, name: 1 });
+const canons = await Canon.find().sort({ category: 1, order: 1, name: 1 });
+
 
   const categories = {};
 
@@ -137,7 +138,14 @@ if (interaction.commandName === "canonlist") {
   const makeEmbed = (title, groups, gif, color) => {
     let description = "";
 
-    for (const sub of Object.keys(groups)) {
+const orderedSubs = Object.keys(groups).sort((a, b) => {
+  const first = canons.find(c => c.subCategory === a)?.order ?? 999;
+  const second = canons.find(c => c.subCategory === b)?.order ?? 999;
+  return first - second;
+});
+
+for (const sub of orderedSubs) {
+
       description += `\n**→ ${sub}:**\n`;
       description += groups[sub].join("\n") + "\n";
     }
@@ -278,7 +286,8 @@ client.on("interactionCreate", async interaction => {
       });
     }
 
-    const canons = await Canon.find().sort({ category: 1, subCategory: 1, name: 1 });
+const canons = await Canon.find().sort({ category: 1, order: 1, name: 1 });
+
 
     const categories = {};
 
@@ -298,7 +307,14 @@ client.on("interactionCreate", async interaction => {
     const makeEmbed = (title, groups, gif, color) => {
       let description = "";
 
-      for (const sub of Object.keys(groups)) {
+      const orderedSubs = Object.keys(groups).sort((a, b) => {
+  const first = canons.find(c => c.subCategory === a)?.order ?? 999;
+  const second = canons.find(c => c.subCategory === b)?.order ?? 999;
+  return first - second;
+});
+
+for (const sub of orderedSubs) {
+
         description += `\n**→ ${sub}:**\n`;
         description += groups[sub].join("\n") + "\n";
       }
