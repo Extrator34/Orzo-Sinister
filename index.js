@@ -7,7 +7,7 @@ import Canon from "./canon.js";
 dotenv.config();
 
 // Costanti
-const PANEL_REQUIRED_ROLE = "779080986310213642";
+const PANEL_REQUIRED_ROLE = "1277156820670091286";
 const PORT = 10000;
 
 const gifHazbin = "https://i.postimg.cc/tgnBG8cR/sinister_inferno.png";
