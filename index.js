@@ -220,8 +220,11 @@ for (const sub of orderedSubs) {
 
     canon.assignedTo = user.id;
     await canon.save();
+return interaction.reply({
+  content: `✅ **${name}** è stato assegnato a ${user}.`,
+  flags: 64
+});
 
-    return interaction.reply(`✅ **${name}** è stato assegnato a ${user}.`);
   }
 
   /* CANON REMOVE */
@@ -265,7 +268,11 @@ for (const sub of orderedSubs) {
     canon.assignedTo = null;
     await canon.save();
 
-    return interaction.reply(`🔄 **${name}** è stato liberato (precedente proprietario: <@${oldOwner}>).`);
+   return interaction.reply({
+  content: `🔄 **${name}** è stato liberato (precedente proprietario: <@${oldOwner}>).`,
+  flags: 64
+});
+
   }
 });
 
