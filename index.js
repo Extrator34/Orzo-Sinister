@@ -106,62 +106,72 @@ client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   /* CANONLIST */
-  if (interaction.commandName === "canonlist") {
-    const member = interaction.member;
+  /* CANONLIST */
+if (interaction.commandName === "canonlist") {
+  const member = interaction.member;
 
-    if (!member.roles.cache.has(PANEL_REQUIRED_ROLE)) {
-      return interaction.reply({
-        content: "⛔ Non hai il permesso.",
-        ephemeral: true
-      });
-    }
-
-    const canons = await Canon.find().sort({ category: 1, name: 1 });
-
-    const categories = {};
-    for (const c of canons) {
-      if (!categories[c.category]) categories[c.category] = [];
-      if (c.assignedTo) {
-        categories[c.category].push(`・ ${c.name} : <@${c.assignedTo}>`);
-      } else {
-        categories[c.category].push(`・ ${c.name}`);
-      }
-    }
-
-    const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = await import("discord.js");
-
-    const makeEmbed = (title, list, gif, color) => {
-      const embed = new EmbedBuilder()
-        .setTitle(` ${title}`)
-         .setColor(color)
-        .setDescription(list.join("\n"));
-
-      if (gif) embed.setImage(gif);
-
-      return embed;
-    };
-
-    const embeds = [];
-
- if (categories["INFERNO"]) {
-     embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin, "#ff003c"));
-
-    }
-
-    if (categories["PARADISO"]) {
-    embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso, "#f7d400"));
-
-    }
-
-    const refreshButton = new ButtonBuilder()
-      .setCustomId("canon_refresh")
-      .setEmoji("🔄")
-      .setStyle(ButtonStyle.Secondary);
-
-    const row = new ActionRowBuilder().addComponents(refreshButton);
-
-    return interaction.reply({ embeds, components: [row] });
+  if (!member.roles.cache.has(PANEL_REQUIRED_ROLE)) {
+    return interaction.reply({
+      content: "⛔ Non hai il permesso.",
+      ephemeral: true
+    });
   }
+
+  const canons = await Canon.find().sort({ category: 1, subCategory: 1, name: 1 });
+
+  const categories = {};
+
+  for (const c of canons) {
+    if (!categories[c.category]) categories[c.category] = {};
+    if (!categories[c.category][c.subCategory]) categories[c.category][c.subCategory] = [];
+
+    if (c.assignedTo) {
+      categories[c.category][c.subCategory].push(`・ ${c.name} : <@${c.assignedTo}>`);
+    } else {
+      categories[c.category][c.subCategory].push(`・ ${c.name}`);
+    }
+  }
+
+  const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = await import("discord.js");
+
+  const makeEmbed = (title, groups, gif, color) => {
+    let description = "";
+
+    for (const sub of Object.keys(groups)) {
+      description += `\n**→ ${sub}:**\n`;
+      description += groups[sub].join("\n") + "\n";
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle(` ${title}`)
+      .setColor(color)
+      .setDescription(description);
+
+    if (gif) embed.setImage(gif);
+
+    return embed;
+  };
+
+  const embeds = [];
+
+  if (categories["INFERNO"]) {
+    embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin, "#ff003c"));
+  }
+
+  if (categories["PARADISO"]) {
+    embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso, "#f7d400"));
+  }
+
+  const refreshButton = new ButtonBuilder()
+    .setCustomId("canon_refresh")
+    .setEmoji("🔄")
+    .setStyle(ButtonStyle.Secondary);
+
+  const row = new ActionRowBuilder().addComponents(refreshButton);
+
+  return interaction.reply({ embeds, components: [row] });
+}
+
 
   /* CANON */
   if (interaction.commandName === "canon") {
