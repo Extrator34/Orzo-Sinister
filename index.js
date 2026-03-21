@@ -10,8 +10,8 @@ dotenv.config();
 const PANEL_REQUIRED_ROLE = "779080986310213642";
 const PORT = 10000;
 
-const gifHazbin = "https://i.postimg.cc/QCw6CSJT/Charlie_XVaggie.gif";
-const gifParadiso = "https://i.postimg.cc/RVjxCFSq/Emily.gif";
+const gifHazbin = "https://i.postimg.cc/tgnBG8cR/sinister_inferno.png";
+const gifParadiso = "https://i.postimg.cc/PqvSn07X/sinister_paradiso.png";
 const gifHelluva = "https://i.postimg.cc/65Dx63WZ/Stella.gif";
 const gifPeccati = "https://i.postimg.cc/nc6fVzFY/Belzebub.gif";
 const cornerImage = "https://i.postimg.cc/DfWvm02Y/Charlie_ahegao.png";
@@ -272,25 +272,35 @@ client.on("interactionCreate", async interaction => {
       });
     }
 
-    const canons = await Canon.find().sort({ category: 1, name: 1 });
+    const canons = await Canon.find().sort({ category: 1, subCategory: 1, name: 1 });
 
     const categories = {};
+
     for (const c of canons) {
-      if (!categories[c.category]) categories[c.category] = [];
+      if (!categories[c.category]) categories[c.category] = {};
+      if (!categories[c.category][c.subCategory]) categories[c.category][c.subCategory] = [];
+
       if (c.assignedTo) {
-        categories[c.category].push(`・ ${c.name} : <@${c.assignedTo}>`);
+        categories[c.category][c.subCategory].push(`・ ${c.name} : <@${c.assignedTo}>`);
       } else {
-        categories[c.category].push(`・ ${c.name}`);
+        categories[c.category][c.subCategory].push(`・ ${c.name}`);
       }
     }
 
     const { EmbedBuilder } = await import("discord.js");
 
-    const makeEmbed = (title, list, gif, corner) => {
+    const makeEmbed = (title, groups, gif, corner) => {
+      let description = "";
+
+      for (const sub of Object.keys(groups)) {
+        description += `\n**→ ${sub}:**\n`;
+        description += groups[sub].join("\n") + "\n";
+      }
+
       const embed = new EmbedBuilder()
         .setTitle(`📜 ${title}`)
         .setColor("#ff003c")
-        .setDescription(list.join("\n"));
+        .setDescription(description);
 
       if (gif) embed.setImage(gif);
       if (corner) embed.setThumbnail(corner);
@@ -300,21 +310,18 @@ client.on("interactionCreate", async interaction => {
 
     const embeds = [];
 
-    if (categories["HAZBIN HOTEL"])
-      embeds.push(makeEmbed("Hazbin Hotel", categories["HAZBIN HOTEL"], gifHazbin, cornerImage));
+    if (categories["INFERNO"]) {
+      embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin));
+    }
 
-    if (categories["PARADISO"])
+    if (categories["PARADISO"]) {
       embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso));
-
-    if (categories["HELLUVA BOSS"])
-      embeds.push(makeEmbed("Helluva Boss", categories["HELLUVA BOSS"], gifHelluva));
-
-    if (categories["PECCATI CAPITALI"])
-      embeds.push(makeEmbed("Peccati Capitali", categories["PECCATI CAPITALI"], gifPeccati));
+    }
 
     return interaction.update({ embeds });
   }
 });
+
 
 /* ============================================================
    READY + KEEP ALIVE + START
