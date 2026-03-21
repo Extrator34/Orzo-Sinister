@@ -14,7 +14,6 @@ const gifHazbin = "https://i.postimg.cc/tgnBG8cR/sinister_inferno.png";
 const gifParadiso = "https://i.postimg.cc/PqvSn07X/sinister_paradiso.png";
 const gifHelluva = "https://i.postimg.cc/65Dx63WZ/Stella.gif";
 const gifPeccati = "https://i.postimg.cc/nc6fVzFY/Belzebub.gif";
-const cornerImage = "https://i.postimg.cc/DfWvm02Y/Charlie_ahegao.png";
 
 // Client Discord
 const client = new Client({
@@ -131,31 +130,28 @@ client.on("interactionCreate", async interaction => {
 
     const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = await import("discord.js");
 
-    const makeEmbed = (title, list, gif, corner) => {
+    const makeEmbed = (title, list, gif, color) => {
       const embed = new EmbedBuilder()
-        .setTitle(`📜 ${title}`)
-        .setColor("#ff003c")
+        .setTitle(` ${title}`)
+         .setColor(color)
         .setDescription(list.join("\n"));
 
       if (gif) embed.setImage(gif);
-      if (corner) embed.setThumbnail(corner);
 
       return embed;
     };
 
     const embeds = [];
 
-    if (categories["HAZBIN HOTEL"])
-      embeds.push(makeEmbed("Hazbin Hotel", categories["HAZBIN HOTEL"], gifHazbin, cornerImage));
+ if (categories["INFERNO"]) {
+     embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin, "#ff003c"));
 
-    if (categories["PARADISO"])
-      embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso));
+    }
 
-    if (categories["HELLUVA BOSS"])
-      embeds.push(makeEmbed("Helluva Boss", categories["HELLUVA BOSS"], gifHelluva));
+    if (categories["PARADISO"]) {
+    embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso, "#f7d400"));
 
-    if (categories["PECCATI CAPITALI"])
-      embeds.push(makeEmbed("Peccati Capitali", categories["PECCATI CAPITALI"], gifPeccati));
+    }
 
     const refreshButton = new ButtonBuilder()
       .setCustomId("canon_refresh")
@@ -289,7 +285,7 @@ client.on("interactionCreate", async interaction => {
 
     const { EmbedBuilder } = await import("discord.js");
 
-    const makeEmbed = (title, groups, gif, corner) => {
+    const makeEmbed = (title, groups, gif, color) => {
       let description = "";
 
       for (const sub of Object.keys(groups)) {
@@ -298,12 +294,11 @@ client.on("interactionCreate", async interaction => {
       }
 
       const embed = new EmbedBuilder()
-        .setTitle(`📜 ${title}`)
-        .setColor("#ff003c")
+        .setTitle(` ${title}`)
+         .setColor(color)
         .setDescription(description);
 
       if (gif) embed.setImage(gif);
-      if (corner) embed.setThumbnail(corner);
 
       return embed;
     };
@@ -311,11 +306,11 @@ client.on("interactionCreate", async interaction => {
     const embeds = [];
 
     if (categories["INFERNO"]) {
-      embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin));
+      embeds.push(makeEmbed("Inferno", categories["INFERNO"], gifHazbin, "#ff003c"));
     }
 
     if (categories["PARADISO"]) {
-      embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso));
+       embeds.push(makeEmbed("Paradiso", categories["PARADISO"], gifParadiso, "#f7d400"));
     }
 
     return interaction.update({ embeds });
